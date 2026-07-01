@@ -4,16 +4,23 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
+inventory ={}
+
 @app.route("inventory")
 def get_invetory():
-    pass
+    return jsonify(inventory)
 @app.route("inventory/<int:id>", methods = ["GET"])
 def get_inventory_by_id(id):
-    pass
+    item = inventory.get(id)
+    if item:
+        return jsonify(item)
+    else:
+        return jsonify({"message": "Could not find Item"}), 404
 
 @app.route("inventory", methods = ["POST"])
 def add_invetory():
-    pass
+    data = request.get_json()
+    
 
 @app.route("inventory/<int:id>", methods = ["PATCH"])
 def update_inventory(id):
