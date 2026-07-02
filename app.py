@@ -1,14 +1,14 @@
 from flask import Flask, request, jsonify
-from flask_cors import CORS
 from inventory import inventory
+import requests
 
 app = Flask(__name__)
-CORS(app)
 
 
-async def fetch_product(barcode):
+
+def fetch_product(barcode):
     base_url = f"https://world.openfoodfacts.org/api/v0/product/{barcode}.json"
-    response = request.get(base_url)
+    response = requests.get(base_url)
     if response.status_code == 200:
         data = response.json()
         if data.get("status")== 1:
@@ -20,13 +20,13 @@ async def fetch_product(barcode):
                 "price": 0.0, 
                 "stock": 0      
             }
-    return jsonify({"message": "Error fetching product"})
+    return None
             
 
-@app.route("inventory")
+@app.route("/inventory")
 def get_invetory():
     return jsonify(inventory)
-@app.route("inventory/<int:id>", methods = ["GET"])
+@app.route("/inventory/<id>", methods = ["GET"])
 def get_inventory_by_id(id):
     item = inventory.get(id)
     if item:
@@ -34,7 +34,7 @@ def get_inventory_by_id(id):
     else:
         return jsonify({"message": "Could not find Item"}), 404
 
-@app.route("inventory", methods = ["POST"])
+@app.route("/inventory", methods = ["POST"])
 def add_invetory():
     data = request.get_json()
     barcode = data.get("barcode")
@@ -47,7 +47,7 @@ def add_invetory():
 
     
 
-@app.route("inventory/<int:id>", methods = ["PATCH"])
+@app.route("/inventory/<id>", methods = ["PATCH"])
 def update_inventory(id):
     if id not in inventory:
         return ("Item not found", 404)
@@ -55,7 +55,7 @@ def update_inventory(id):
     inventory[id].update(data)
     return jsonify(inventory[id])
 
-@app.route("inventory/<int:id>", methods = ["DELETE"])
+@app.route("/inventory/<id>", methods = ["DELETE"])
 def delete_inventory(id):
     if id not in inventory:
         return ("Item not found", 404)
