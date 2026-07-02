@@ -8,8 +8,8 @@ app = Flask(__name__)
 
 def fetch_product(barcode):
     base_url = f"https://world.openfoodfacts.org/api/v0/product/{barcode}.json"
-    headers = {"User-Agent": "AdminPortalInventory/1.0 (kipngeno@example.com)"}
-    response = requests.get(base_url, headers=headers, timeout=5)
+    headers = {"User-Agent": "AdminPortalInventory/1.0 (kipngeno@example.com)"}#for authorization to fetch from the api
+    response = requests.get(base_url, headers=headers, timeout=5)#sets timeout 
     if response.status_code == 200:
         data = response.json()
         print(data)
@@ -35,7 +35,7 @@ def get_inventory_by_id(id):
         return jsonify(item)
     else:
         return jsonify({"message": "Could not find Item"}), 404
-
+#fetch data from the api and add it to the mock up
 @app.route("/inventory", methods = ["POST"])
 def add_invetory():
     data = request.get_json()
